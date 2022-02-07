@@ -1,0 +1,21 @@
+{
+  "name": "alexandreparjouet_7_07022022",
+  "version": "1.0.0",
+  "description": "p7 ocr",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FrSenpai/AlexandreParjouet_7_07022022.git"
+  },
+  "author": "Parjouet Alexandre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FrSenpai/AlexandreParjouet_7_07022022/issues"
+  },
+  "homepage": "https://github.com/FrSenpai/AlexandreParjouet_7_07022022#readme",
+  "devDependencies": {
+    "eslint": "^8.8.0"
+  }
+}
