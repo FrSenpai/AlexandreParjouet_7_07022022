@@ -1,9 +1,8 @@
 import {Recipes} from "../src/js/factories/Recipes.js"
 class Home {
+    recipes
     constructor() {
-        console.log("init")
-        console.log(Recipes)
+        this.recipes = new Recipes()
     }
 }
-
-const home = new Home()
+new Home()
