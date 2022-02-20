@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/%22%3E"/>
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto&display=swap" rel="stylesheet">
 
     <title>Les petits plats</title>
 </head>
@@ -24,8 +24,39 @@
             <img src="assets/img/search.png" alt="search icon">
         </form>
         <ul class="ctnTagPicked"></ul>
-        <ul class="ctnTagsList"></ul>
-        
+        <ul class="ctnTagsList">
+            <li class="tag ingredients">
+                <input type="text" placeholder="Ingredients" class="tagInput" name="ingredientsInput" id="ingredientsInput">
+                <img src="assets/img/downArrow.png" alt="Flèche d'ouverture panel ingrédients">
+            </li>
+            <li class="tag devices">
+                <input type="text" placeholder="Appareils" class="tagInput" name="devicesInput" id="devicesInput">
+                <img src="assets/img/downArrow.png" alt="Flèche d'ouverture panel appareils">
+            </li>
+            <li class="tag utensils">
+                <input type="text" placeholder="Ustensiles" class="tagInput" name="utensilsInput" id="utensilsInput">
+                <img src="assets/img/downArrow.png" alt="Flèche d'ouverture panel ustensiles">
+            </li>
+        </ul>
+        <ul class="itemsList">
+            <li class="ctnItems">
+                <section class="item">
+                    <h3>Lait de coco</h3>
+                    <span class="time">
+                        <img src="assets/img/timer.png" alt="Icone de durée de la recette">
+                        60 min
+                    </span>
+                    <ul>
+                        <li> <span class="bold">Lait de coco:</span>  400ml</li>
+                        <li><span class="bold">Jus de citron :</span> 2</li>
+                        <li><span class="bold">Crème de coco :</span> 4 cuillères</li>
+                    </ul>
+                    <p>Mettre les glaçons à votre goût dans le blender, ajouter le lait, la crème de coco, le jus de 2 citrons et le sucre. Mixer jusqu'à avoir la consistence désirée</p>
+                
+                </section>
+
+            </li>
+        </ul>
     </main>
     <script type="module" src="../src/index.js"></script>
 </body>
