@@ -2,8 +2,10 @@ import {
     recipes
 } from "../../assets/data/recipes.js"
 export class Recipes {
+    recipesList = recipes
     constructor() {
-        console.log(recipes)
+        console.log(this.recipesList)
     }
 
+    
 }
