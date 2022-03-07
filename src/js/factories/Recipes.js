@@ -15,11 +15,9 @@ export class Recipes {
     generateRecipesDOM() {
         const tags = {ingredients: [], devices: [], utensils: []}
         this.recipesList.map((r) => {
-            console.log(r)
             //fill tags list 
             if (!tags.devices.includes(r.appliance)) tags.devices.push(r.appliance)
             r.ustensils.map((u) => {
-                console.log(u)
                 if (!tags.utensils.includes(u.toLowerCase())) tags.utensils.push(u.toLowerCase())
             })
             const ctnItems = document.createElement('li')
