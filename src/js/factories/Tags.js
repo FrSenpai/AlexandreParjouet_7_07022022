@@ -13,22 +13,29 @@ export class Tags {
     }
     handleTagsCtnClick() {
         const tagsInput = document.getElementsByClassName('tagInput')
-        let indexOpened = null
-        for (let i = 0; i < tagsInput.length; i++) {
-            const tag = tagsInput[i]
-            tag.addEventListener('click', (e) => {
-                if (!this.tabOpened) {
-                    indexOpened = i
-                    this.openTab(tag)
-                } else {
-                    if (indexOpened !== i) {
-                        indexOpened = i
-                        this.closeOpenedTags(e, indexOpened)
-                    } else this.closeOpenedTags(e)
-                }
+        const actionBtn = document.getElementsByClassName("tabTagInteract")
+        this.createTagModalEvents([tagsInput, actionBtn])
+    }
 
-            })
-        }
+    createTagModalEvents(targets) {
+        targets.map((t) => {
+            let indexOpened = null
+            for (let i = 0; i < t.length; i++) {
+                const tag = t[i]
+                tag.addEventListener('click', (e) => {
+                    if (!this.tabOpened) {
+                        indexOpened = i
+                        this.openTab(tag)
+                    } else {
+                        if (indexOpened !== i) {
+                            indexOpened = i
+                            this.closeOpenedTags(e, indexOpened)
+                        } else this.closeOpenedTags(e)
+                    }
+
+                })
+            }
+        })
     }
 
     generateTagsContent(tags) {
@@ -49,20 +56,16 @@ export class Tags {
     handleTagClickEvent(name, tagType) {
         const isAlreadyPushed = this.tagPicked.filter((t) => t.name === name).length > 0
         const ctnTagPicked = document.getElementsByClassName('ctnTagPicked')[0]
-        console.log(this.tagPicked)
-        console.log(isAlreadyPushed)
         if (!isAlreadyPushed) {
-            
+
             const tag = document.createElement('li')
             tag.textContent = name
             const actionIcon = document.createElement('img')
             actionIcon.setAttribute("src", "../src/assets/img/delete.png")
             actionIcon.setAttribute('alt', 'Remove the tag')
             actionIcon.addEventListener('click', (e) => {
-                console.log("close !")
                 this.removeTagPicked(e)
             })
-            console.log(tagType)
             tag.appendChild(actionIcon)
             tag.style.backgroundColor = this.getBGColorFromTagType(tagType)
             ctnTagPicked.appendChild(tag)
@@ -75,13 +78,10 @@ export class Tags {
     }
 
     removeTagPicked(event) {
-        console.log(event)
-        
         //we target li to remove it
-       const li = event.path[1]
-       console.log(li.textContent)
-       this.tagPicked = this.tagPicked.filter((t) => t.name !== li.textContent)
-       li.remove()
+        const li = event.path[1]
+        this.tagPicked = this.tagPicked.filter((t) => t.name !== li.textContent)
+        li.remove()
     }
 
     getBGColorFromTagType(tagType) {
@@ -96,6 +96,10 @@ export class Tags {
     }
 
     openTab(tagDom) {
+        if (tagDom.className.includes("tabTagInteract")) {
+            const className = tagDom.className.split("tabTagInteract ")[1]
+            tagDom = document.getElementById(className+"Input")
+        }
         const className = tagDom.name.split("Input")[0]
         const ctnTag = document.getElementsByClassName("tag " + className)[0]
         const tagList = ctnTag.getElementsByTagName('ul')[0]
@@ -130,7 +134,6 @@ export class Tags {
         }
         this.tabOpened = false
         if (indexToOpen !== null) {
-            console.log(document.getElementsByClassName('tagInput')[indexToOpen])
             this.openTab(document.getElementsByClassName('tagInput')[indexToOpen])
         }
     }
