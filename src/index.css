@@ -54,6 +54,30 @@ h1 img {
   margin-right: 10px;
 }
 
+.ctnTagPicked {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 0;
+}
+
+.ctnTagPicked li {
+  list-style: none;
+  font-family: "Lato", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: row;
+  padding:10px 20px;
+  border-radius: 5px;
+  color: white;
+}
+
+.ctnTagPicked li img {
+  margin-left: 15px;
+}
+
 .ctnTagsList {
   display: flex;
   flex-direction: row;
@@ -112,6 +136,7 @@ h1 img {
   font-family: "Lato", Arial, Helvetica, sans-serif;
   font-size: 18px;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -121,12 +146,18 @@ h1 img {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .tag ul {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .tag ul li:first-letter {
   text-transform: capitalize;
+}
+
+.tag ul li:hover {
+  text-decoration: underline;
 }
 
 .tagInput {
@@ -246,9 +277,8 @@ h1 img {
   align-self: flex-start;
   margin: 0;
   height: 170px;
-  /* white-space:normal;
-    overflow: hidden;
-    text-overflow: ellipsis; */
+  max-height: 100px;
+
 }
 
 .bold {

@@ -2,6 +2,7 @@ import translateTags from "../helpers/translateTag.js"
 
 export class Tags {
     tabOpened = false
+    tagPicked = []
     constructor(tags = {
         ingredients,
         devices,
@@ -37,9 +38,61 @@ export class Tags {
             tags[tag].map((t) => {
                 const item = document.createElement("li")
                 item.textContent = t
+                item.addEventListener('click', (e) => {
+                    this.handleTagClickEvent(e.target.innerText, tag)
+                })
                 tagList[0].appendChild(item)
             })
         })
+    }
+
+    handleTagClickEvent(name, tagType) {
+        const isAlreadyPushed = this.tagPicked.filter((t) => t.name === name).length > 0
+        const ctnTagPicked = document.getElementsByClassName('ctnTagPicked')[0]
+        console.log(this.tagPicked)
+        console.log(isAlreadyPushed)
+        if (!isAlreadyPushed) {
+            
+            const tag = document.createElement('li')
+            tag.textContent = name
+            const actionIcon = document.createElement('img')
+            actionIcon.setAttribute("src", "../src/assets/img/delete.png")
+            actionIcon.setAttribute('alt', 'Remove the tag')
+            actionIcon.addEventListener('click', (e) => {
+                console.log("close !")
+                this.removeTagPicked(e)
+            })
+            console.log(tagType)
+            tag.appendChild(actionIcon)
+            tag.style.backgroundColor = this.getBGColorFromTagType(tagType)
+            ctnTagPicked.appendChild(tag)
+            this.tagPicked.push({
+                type: tagType,
+                name
+            })
+        }
+
+    }
+
+    removeTagPicked(event) {
+        console.log(event)
+        
+        //we target li to remove it
+       const li = event.path[1]
+       console.log(li.textContent)
+       this.tagPicked = this.tagPicked.filter((t) => t.name !== li.textContent)
+       li.remove()
+    }
+
+    getBGColorFromTagType(tagType) {
+        switch (tagType) {
+            case "ingredients":
+                return "#3282f7"
+            case "devices":
+                return "#68d9a4"
+            case "utensils":
+                return "#ed6454"
+        }
     }
 
     openTab(tagDom) {
