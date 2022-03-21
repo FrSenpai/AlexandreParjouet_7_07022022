@@ -1,13 +1,16 @@
 import translateTags from "../helpers/translateTag.js"
+import { Recipes } from "./Recipes.js"
 
 export class Tags {
     tabOpened = false
     tagPicked = []
+    recipes
     constructor(tags = {
         ingredients,
         devices,
         utensils
     }) {
+        this.cleanDom()
         this.handleTagsCtnClick()
         this.generateTagsContent(tags)
     }
@@ -15,6 +18,13 @@ export class Tags {
         const tagsInput = document.getElementsByClassName('tagInput')
         const actionBtn = document.getElementsByClassName("tabTagInteract")
         this.createTagModalEvents([tagsInput, actionBtn])
+    }
+
+    cleanDom() {
+        const list = document.getElementsByClassName('tagsList')[0]
+        while (list.lastElementChild) {
+            list.removeChild(list.lastElementChild)
+        }
     }
 
     createTagModalEvents(targets) {
@@ -39,6 +49,7 @@ export class Tags {
     }
 
     generateTagsContent(tags) {
+        console.log(tags)
         Object.keys(tags).map((tag) => {
             const ctnTag = document.getElementsByClassName('tag ' + tag)[0]
             const tagList = ctnTag.getElementsByTagName("ul")
@@ -73,6 +84,7 @@ export class Tags {
                 type: tagType,
                 name
             })
+            this.recipes = new Recipes({content:document.getElementById('search').value, tags:this.tagPicked})
         }
 
     }
@@ -81,6 +93,8 @@ export class Tags {
         //we target li to remove it
         const li = event.path[1]
         this.tagPicked = this.tagPicked.filter((t) => t.name !== li.textContent)
+        console.log(document.getElementById('search').value)
+        this.recipes = new Recipes({content:document.getElementById('search').value, tags:this.tagPicked})
         li.remove()
     }
 
