@@ -273,7 +273,6 @@ h1 img {
   align-self: center;
   font-family: "Lato", Arial, Helvetica, sans-serif;
   font-size: 12px;
-
 }
 
 .item p {
@@ -286,6 +285,10 @@ h1 img {
   margin: 0;
   height: 170px;
   max-height: 100px;
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 
 }
 

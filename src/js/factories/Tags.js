@@ -1,5 +1,7 @@
 import translateTags from "../helpers/translateTag.js"
-import { Recipes } from "./Recipes.js"
+import {
+    Recipes
+} from "./Recipes.js"
 
 export class Tags {
     tabOpened = false
@@ -11,6 +13,7 @@ export class Tags {
         utensils
     }) {
         this.cleanDom()
+        this.refreshTagPicked()
         this.handleTagsCtnClick()
         this.generateTagsContent(tags)
     }
@@ -21,9 +24,32 @@ export class Tags {
     }
 
     cleanDom() {
-        const list = document.getElementsByClassName('tagsList')[0]
-        while (list.lastElementChild) {
-            list.removeChild(list.lastElementChild)
+        const list = document.getElementsByClassName('tagsList')
+        for (let i = 0; i < list.length; i++) {
+            while (list[i].lastElementChild) {
+                list[i].removeChild(list[i].lastElementChild)
+            }
+        }
+    }
+    
+    refreshTagPicked() {
+        const tags = document.getElementsByClassName("ctnTagPicked")[0].getElementsByTagName("li")
+        for (let i = 0; i < tags.length; i++) {
+            this.tagPicked.push({
+                type: this.getTagType(tags[i].style.backgroundColor),
+                name: tags[i].innerText
+            })
+        }
+    }
+
+    getTagType(bgColor) {
+        switch (bgColor) {
+            case "rgb(50, 130, 247)":
+                return "ingredients"
+            case "rgb(104, 217, 164)":
+                return "devices"
+            case "rgb(237, 100, 84)":
+                return "utensils"
         }
     }
 
@@ -65,10 +91,11 @@ export class Tags {
     }
 
     handleTagClickEvent(name, tagType) {
-        const isAlreadyPushed = this.tagPicked.filter((t) => t.name === name).length > 0
+        console.log(this.tagPicked)
+        const isAlreadyPushed = this.tagPicked.filter((t) => t.name.toLowerCase() === name.toLowerCase()).length > 0
+        console.log(isAlreadyPushed)
         const ctnTagPicked = document.getElementsByClassName('ctnTagPicked')[0]
         if (!isAlreadyPushed) {
-
             const tag = document.createElement('li')
             tag.textContent = name
             const actionIcon = document.createElement('img')
@@ -84,7 +111,10 @@ export class Tags {
                 type: tagType,
                 name
             })
-            this.recipes = new Recipes({content:document.getElementById('search').value, tags:this.tagPicked})
+            this.recipes = new Recipes({
+                content: document.getElementById('search').value,
+                tags: this.tagPicked
+            })
         }
 
     }
@@ -94,8 +124,12 @@ export class Tags {
         const li = event.path[1]
         this.tagPicked = this.tagPicked.filter((t) => t.name !== li.textContent)
         console.log(document.getElementById('search').value)
-        this.recipes = new Recipes({content:document.getElementById('search').value, tags:this.tagPicked})
         li.remove()
+        this.recipes = new Recipes({
+            content: document.getElementById('search').value.toLowerCase(),
+            tags: this.tagPicked
+        })
+
     }
 
     getBGColorFromTagType(tagType) {
@@ -112,7 +146,7 @@ export class Tags {
     openTab(tagDom) {
         if (tagDom.className.includes("tabTagInteract")) {
             const className = tagDom.className.split("tabTagInteract ")[1]
-            tagDom = document.getElementById(className+"Input")
+            tagDom = document.getElementById(className + "Input")
         }
         const className = tagDom.name.split("Input")[0]
         const ctnTag = document.getElementsByClassName("tag " + className)[0]
@@ -150,9 +184,5 @@ export class Tags {
         if (indexToOpen !== null) {
             this.openTab(document.getElementsByClassName('tagInput')[indexToOpen])
         }
-    }
-
-    updateTagsPlaceholders() {
-
     }
 }
