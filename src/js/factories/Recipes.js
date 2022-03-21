@@ -1,20 +1,60 @@
 import {
     recipes
 } from "../../assets/data/recipes.js"
-import { Tags } from "./Tags.js"
+import {
+    Tags
+} from "./Tags.js"
 export class Recipes {
     recipesList = recipes
     tags
-    constructor() {
-        this.generateRecipesDOM()
+    constructor(filter = {
+        content: "",
+        tags: []
+    }) {
+
+        // this.generateRecipesDOM()
+        this.getRecipes(filter)
+    }
+
+    getRecipes(filter) {
+        const filteredRecipes = this.recipesList.filter((r) => {
+            let match = []
+            match.push(r.name.includes(filter.content) || r.description.includes(filter.content))
+            //voir avec Joffrey si tous les éléments doivent matcher ou non 
+            filter.tags.map((t) => {
+                switch (t.type) {
+                    case "ingredients":
+                        match.push(r[t.type].filter((item) => item.ingredient === t.name).length > 0)
+                        break
+                    case "utensils":
+                        match.push(r.ustensils.filter((item) => item === t.name).length > 0)
+                        break
+                    case "devices":
+                        match.push(r.appliance === t.name)
+                }
+
+            })
+            return !match.includes(false)
+        })
+        this.cleanDom()
+        this.generateRecipesDOM(filteredRecipes)
 
     }
 
+    cleanDom() {
+        const items = document.getElementsByClassName('itemsList')[0]
+        while (items.lastElementChild) {
+            items.removeChild(items.lastElementChild)
+        }
+    }
 
-
-    generateRecipesDOM() {
-        const tags = {ingredients: [], devices: [], utensils: []}
-        this.recipesList.map((r) => {
+    generateRecipesDOM(recipes) {
+        const tags = {
+            ingredients: [],
+            devices: [],
+            utensils: []
+        }
+        recipes.map((r) => {
             //fill tags list 
             if (!tags.devices.includes(r.appliance)) tags.devices.push(r.appliance)
             r.ustensils.map((u) => {
@@ -30,7 +70,7 @@ export class Recipes {
             item.appendChild(itemName)
             const duration = document.createElement('span')
             duration.setAttribute('class', 'time')
-            
+
             const durationIcon = document.createElement('img')
             durationIcon.setAttribute('src', 'assets/img/timer.png')
             durationIcon.setAttribute('alt', "Icone de durée de la recette")
@@ -45,9 +85,9 @@ export class Recipes {
                 bold.setAttribute("class", "bold")
                 bold.textContent = i.ingredient + ":"
                 const quantity = document.createElement("p")
-                if (i.unit)quantity.textContent = i.quantity + i.unit
+                if (i.unit) quantity.textContent = i.quantity + i.unit
                 else quantity.textContent = i.quantity
-                
+
                 ingredient.appendChild(bold)
                 ingredient.appendChild(quantity)
                 // ingredient.textContent =i.quantity
