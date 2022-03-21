@@ -16,11 +16,25 @@ export class Tags {
         this.refreshTagPicked()
         this.handleTagsCtnClick()
         this.generateTagsContent(tags)
+        this.handleTagsSearchBar()
     }
     handleTagsCtnClick() {
         const tagsInput = document.getElementsByClassName('tagInput')
         const actionBtn = document.getElementsByClassName("tabTagInteract")
         this.createTagModalEvents([tagsInput, actionBtn])
+    }
+
+    handleTagsSearchBar() {
+        const searchs = document.getElementsByClassName("tagInput")
+        console.log(searchs)
+        for (let i = 0; i< searchs.length; i++) {
+            searchs[i].addEventListener('keyup', (e) => {
+                console.log(e)
+                const searchValue = searchs[i].value
+                console.log(searchValue)
+                //TODO update filter
+            })
+        } 
     }
 
     cleanDom() {
