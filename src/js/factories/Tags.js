@@ -1,20 +1,96 @@
 import translateTags from "../helpers/translateTag.js"
+import {
+    Recipes
+} from "./Recipes.js"
 
 export class Tags {
     tabOpened = false
     tagPicked = []
+    recipes
+    allTags //contain tags sended by parent, will be immutable
+    tags //active tags list displayed
     constructor(tags = {
         ingredients,
         devices,
         utensils
     }) {
+        this.tags = tags
+        this.allTags = {...tags}
+        this.cleanDom()
+        this.refreshTagPicked()
         this.handleTagsCtnClick()
-        this.generateTagsContent(tags)
+        this.generateTagsContent()
+        this.handleTagsSearchBar()
     }
     handleTagsCtnClick() {
         const tagsInput = document.getElementsByClassName('tagInput')
         const actionBtn = document.getElementsByClassName("tabTagInteract")
         this.createTagModalEvents([tagsInput, actionBtn])
+    }
+
+    handleTagsSearchBar() {
+        const searchs = document.getElementsByClassName("tagInput")
+        for (let i = 0; i < searchs.length; i++) {
+            searchs[i].addEventListener('keyup', (e) => {
+                const searchValue = searchs[i].value
+                if (searchValue.length < 3 && searchValue !== "") return
+                if (searchValue !== "") {
+                    this.cleanDom(i)
+                    const tags = Object.values(this.tags)[i].filter((v) => {
+                        return v.toLowerCase().includes(searchValue.toLowerCase())
+                    })
+                    this.tags[Object.entries(this.tags)[i][0]] = tags
+                    this.generateTagsContent(i)
+                } else {
+                    console.log(this.allTags)
+                    this.cleanDom(i)
+                    this.tags[Object.entries(this.tags)[i][0]] = [...this.allTags[Object.entries(this.allTags)[i][0]]]
+                    this.generateTagsContent(i)
+                }
+
+            })
+        }
+    }
+    /**
+     * 
+     * @param {null | number} index we take it to only clean a specific taglist if needed
+     */
+    cleanDom(index = null) {
+        const list = document.getElementsByClassName('tagsList')
+        if (index !== null) {
+            this.removeAllChildsDOM(list[index])
+            return
+        }
+        for (let i = 0; i < list.length; i++) {
+            this.removeAllChildsDOM(list[i])
+        }
+    }
+
+    removeAllChildsDOM(dom) {
+        while (dom.lastElementChild) {
+            dom.removeChild(dom.lastElementChild)
+        }
+    }
+
+    refreshTagPicked() {
+        const tags = document.getElementsByClassName("ctnTagPicked")[0].getElementsByTagName("li")
+        for (let i = 0; i < tags.length; i++) {
+            this.tagPicked.push({
+                type: this.getTagType(tags[i].style.backgroundColor),
+                name: tags[i].innerText
+            })
+        }
+    }
+
+    getTagType(bgColor) {
+        switch (bgColor) {
+            case "rgb(50, 130, 247)":
+                return "ingredients"
+            case "rgb(104, 217, 164)":
+                return "devices"
+            case "rgb(237, 100, 84)":
+                return "utensils"
+        }
     }
 
     createTagModalEvents(targets) {
@@ -37,12 +113,18 @@ export class Tags {
             }
         })
     }
-
-    generateTagsContent(tags) {
-        Object.keys(tags).map((tag) => {
+    /**
+     * 
+     * @param {null | number} index we take it to only generate a specific taglist if needed
+     */
+    generateTagsContent(index = null) {
+        Object.keys(this.tags).map((tag, i) => {
+            if (index !== null && index !== i) {
+                return
+            }
             const ctnTag = document.getElementsByClassName('tag ' + tag)[0]
             const tagList = ctnTag.getElementsByTagName("ul")
-            tags[tag].map((t) => {
+            this.tags[tag].map((t) => {
                 const item = document.createElement("li")
                 item.textContent = t
                 item.addEventListener('click', (e) => {
@@ -54,10 +136,11 @@ export class Tags {
     }
 
     handleTagClickEvent(name, tagType) {
-        const isAlreadyPushed = this.tagPicked.filter((t) => t.name === name).length > 0
+        console.log(this.tagPicked)
+        const isAlreadyPushed = this.tagPicked.filter((t) => t.name.toLowerCase() === name.toLowerCase()).length > 0
+        console.log(isAlreadyPushed)
         const ctnTagPicked = document.getElementsByClassName('ctnTagPicked')[0]
         if (!isAlreadyPushed) {
-
             const tag = document.createElement('li')
             tag.textContent = name
             const actionIcon = document.createElement('img')
@@ -73,6 +156,10 @@ export class Tags {
                 type: tagType,
                 name
             })
+            this.recipes = new Recipes({
+                content: document.getElementById('search').value,
+                tags: this.tagPicked
+            })
         }
 
     }
@@ -81,7 +168,13 @@ export class Tags {
         //we target li to remove it
         const li = event.path[1]
         this.tagPicked = this.tagPicked.filter((t) => t.name !== li.textContent)
+        console.log(document.getElementById('search').value)
         li.remove()
+        this.recipes = new Recipes({
+            content: document.getElementById('search').value.toLowerCase(),
+            tags: this.tagPicked
+        })
+
     }
 
     getBGColorFromTagType(tagType) {
@@ -98,7 +191,7 @@ export class Tags {
     openTab(tagDom) {
         if (tagDom.className.includes("tabTagInteract")) {
             const className = tagDom.className.split("tabTagInteract ")[1]
-            tagDom = document.getElementById(className+"Input")
+            tagDom = document.getElementById(className + "Input")
         }
         const className = tagDom.name.split("Input")[0]
         const ctnTag = document.getElementsByClassName("tag " + className)[0]
@@ -131,14 +224,11 @@ export class Tags {
             const className = tagInput.name.split("Input")[0]
             tagInput.placeholder = translateTags(className)
             tagInput.style.setProperty('--placeholdOpacity', "1")
+            tagInput.value = ""
         }
         this.tabOpened = false
         if (indexToOpen !== null) {
             this.openTab(document.getElementsByClassName('tagInput')[indexToOpen])
         }
-    }
-
-    updateTagsPlaceholders() {
-
     }
 }
