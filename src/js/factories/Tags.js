@@ -7,15 +7,19 @@ export class Tags {
     tabOpened = false
     tagPicked = []
     recipes
+    allTags //contain tags sended by parent, will be immutable
+    tags //active tags list displayed
     constructor(tags = {
         ingredients,
         devices,
         utensils
     }) {
+        this.tags = tags
+        this.allTags = {...tags}
         this.cleanDom()
         this.refreshTagPicked()
         this.handleTagsCtnClick()
-        this.generateTagsContent(tags)
+        this.generateTagsContent()
         this.handleTagsSearchBar()
     }
     handleTagsCtnClick() {
@@ -26,26 +30,48 @@ export class Tags {
 
     handleTagsSearchBar() {
         const searchs = document.getElementsByClassName("tagInput")
-        console.log(searchs)
-        for (let i = 0; i< searchs.length; i++) {
+        for (let i = 0; i < searchs.length; i++) {
             searchs[i].addEventListener('keyup', (e) => {
-                console.log(e)
                 const searchValue = searchs[i].value
-                console.log(searchValue)
-                //TODO update filter
-            })
-        } 
-    }
+                if (searchValue.length < 3 && searchValue !== "") return
+                if (searchValue !== "") {
+                    this.cleanDom(i)
+                    const tags = Object.values(this.tags)[i].filter((v) => {
+                        return v.toLowerCase().includes(searchValue.toLowerCase())
+                    })
+                    this.tags[Object.entries(this.tags)[i][0]] = tags
+                    this.generateTagsContent(i)
+                } else {
+                    console.log(this.allTags)
+                    this.cleanDom(i)
+                    this.tags[Object.entries(this.tags)[i][0]] = [...this.allTags[Object.entries(this.allTags)[i][0]]]
+                    this.generateTagsContent(i)
+                }
 
-    cleanDom() {
-        const list = document.getElementsByClassName('tagsList')
-        for (let i = 0; i < list.length; i++) {
-            while (list[i].lastElementChild) {
-                list[i].removeChild(list[i].lastElementChild)
-            }
+            })
         }
     }
-    
+    /**
+     * 
+     * @param {null | number} index we take it to only clean a specific taglist if needed
+     */
+    cleanDom(index = null) {
+        const list = document.getElementsByClassName('tagsList')
+        if (index !== null) {
+            this.removeAllChildsDOM(list[index])
+            return
+        }
+        for (let i = 0; i < list.length; i++) {
+            this.removeAllChildsDOM(list[i])
+        }
+    }
+
+    removeAllChildsDOM(dom) {
+        while (dom.lastElementChild) {
+            dom.removeChild(dom.lastElementChild)
+        }
+    }
+
     refreshTagPicked() {
         const tags = document.getElementsByClassName("ctnTagPicked")[0].getElementsByTagName("li")
         for (let i = 0; i < tags.length; i++) {
@@ -87,13 +113,18 @@ export class Tags {
             }
         })
     }
-
-    generateTagsContent(tags) {
-        console.log(tags)
-        Object.keys(tags).map((tag) => {
+    /**
+     * 
+     * @param {null | number} index we take it to only generate a specific taglist if needed
+     */
+    generateTagsContent(index = null) {
+        Object.keys(this.tags).map((tag, i) => {
+            if (index !== null && index !== i) {
+                return
+            }
             const ctnTag = document.getElementsByClassName('tag ' + tag)[0]
             const tagList = ctnTag.getElementsByTagName("ul")
-            tags[tag].map((t) => {
+            this.tags[tag].map((t) => {
                 const item = document.createElement("li")
                 item.textContent = t
                 item.addEventListener('click', (e) => {
@@ -193,6 +224,7 @@ export class Tags {
             const className = tagInput.name.split("Input")[0]
             tagInput.placeholder = translateTags(className)
             tagInput.style.setProperty('--placeholdOpacity', "1")
+            tagInput.value = ""
         }
         this.tabOpened = false
         if (indexToOpen !== null) {
