@@ -18,25 +18,41 @@ export class Recipes {
     }
 
     getRecipes(filter) {
-        const filteredRecipes = this.recipesList.filter((r) => {
+        const filteredRecipes = []
+        for (let i = 0; i < this.recipesList.length; i++) {
             let match = []
+            const r = this.recipesList[i]
             match.push(r.name.toLowerCase().includes(filter.content.toLowerCase()) || r.description.toLowerCase().includes(filter.content.toLowerCase()))
-            //voir avec Joffrey si tous les éléments doivent matcher ou non 
-            filter.tags.map((t) => {
+            for (let k = 0; k < filter.tags.length; k++) {
+                const t = filter.tags[k]
                 switch (t.type) {
                     case "ingredients":
-                        match.push(r[t.type].filter((item) => item.ingredient.toLowerCase() === t.name.toLowerCase()).length > 0)
+                        const ingredients = [];
+                        for (let j = 0; j < r[t.type].length; j++) {
+                            const item = r[t.type][j]
+                            if (item.ingredient.toLowerCase() === t.name.toLowerCase()) {
+                                ingredients.push(item)
+                            }
+                        }
+                        match.push(ingredients.length > 0)
                         break
                     case "utensils":
-                        match.push(r.ustensils.filter((item) => item.toLowerCase() === t.name.toLowerCase()).length > 0)
+                        const utensils = [];
+                        for (let j = 0; j < r.ustensils.length; j++) {
+                            const item = r.ustensils[j]
+                            if (item.toLowerCase() === t.name.toLowerCase()) {
+                                utensils.push(item)
+                            }
+                        }
+                        match.push(utensils.length > 0)
                         break
                     case "devices":
                         match.push(r.appliance.toLowerCase() === t.name.toLowerCase())
                 }
 
-            })
-            return !match.includes(false)
-        })
+            }
+            if (!match.includes(false)) filteredRecipes.push(r)
+        }
         this.cleanDom()
         this.generateRecipesDOM(filteredRecipes)
 
