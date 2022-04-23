@@ -54,7 +54,7 @@ export class Recipes {
             if (!match.includes(false)) filteredRecipes.push(r)
         }
         this.cleanDom()
-        this.generateRecipesDOM(filteredRecipes)
+        this.generateRecipesDOM(filteredRecipes, filter)
 
     }
 
@@ -76,17 +76,18 @@ export class Recipes {
         }
     }
 
-    generateRecipesDOM(recipes) {
+    generateRecipesDOM(recipes, filter) {
         const tags = {
             ingredients: [],
             devices: [],
             utensils: []
         }
+        console.log(filter)
         recipes.map((r) => {
             //fill tags list 
-            if (!tags.devices.includes(r.appliance)) tags.devices.push(r.appliance)
+            if (!tags.devices.includes(r.appliance) && !(filter.tags.filter((t) => t.type === "devices" && t.name.toLowerCase() === r.appliance.toLowerCase()).length > 0)) tags.devices.push(r.appliance)
             r.ustensils.map((u) => {
-                if (!tags.utensils.includes(u.toLowerCase())) tags.utensils.push(u.toLowerCase())
+                if (!tags.utensils.includes(u.toLowerCase()) && !(filter.tags.filter((t) => t.type === "utensils" && t.name.toLowerCase() === u.toLowerCase()).length > 0)) tags.utensils.push(u.toLowerCase())
             })
             const ctnItems = document.createElement('li')
             ctnItems.setAttribute('class', "ctnItems")
@@ -110,7 +111,7 @@ export class Recipes {
                 const alreadyPushed = tags.ingredients.filter((ing) => {
                     return ing.toLowerCase().includes(i.ingredient.toLowerCase())
                 })
-                if (!alreadyPushed.length > 0) {
+                if (!alreadyPushed.length > 0 && !(filter.tags.filter((t) => t.type ==="ingredients" && t.name.toLowerCase() === i.ingredient.toLowerCase()).length>0)) {
                     tags.ingredients.push(i.ingredient)
                 } 
                
@@ -135,6 +136,12 @@ export class Recipes {
             const itemsList = document.getElementsByClassName('itemsList')[0]
             itemsList.appendChild(ctnItems)
         })
+        if (!(recipes.length > 0)) {
+            const itemsList = document.getElementsByClassName('itemsList')[0]
+            const emptyText = document.createElement('p')
+            emptyText.textContent = "Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson », etc..."
+            itemsList.appendChild(emptyText)
+        }
         this.tags = new Tags(tags)
     }
 }
